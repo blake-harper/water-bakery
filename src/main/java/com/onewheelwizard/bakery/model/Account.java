@@ -1,6 +1,7 @@
 package com.onewheelwizard.bakery.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.onewheelwizard.bakery.model.constants.UserType;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

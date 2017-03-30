@@ -1,6 +1,7 @@
 package com.onewheelwizard.bakery;
 
 import com.onewheelwizard.bakery.model.*;
+import com.onewheelwizard.bakery.model.constants.UserType;
 import com.onewheelwizard.bakery.model.constants.WaterCondition;
 import com.onewheelwizard.bakery.model.constants.WaterPurityCondition;
 import com.onewheelwizard.bakery.model.constants.WaterType;

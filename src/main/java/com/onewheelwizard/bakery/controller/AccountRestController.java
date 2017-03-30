@@ -1,6 +1,7 @@
 package com.onewheelwizard.bakery.controller;
 
 import com.onewheelwizard.bakery.model.*;
+import com.onewheelwizard.bakery.security.UsernameNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -59,6 +60,9 @@ public class AccountRestController {
         Account target;
         if (existingAccount.isPresent()) {
             target = existingAccount.get();
+            if (account.getUserType() != null) {
+                target.setUserType(account.getUserType());
+            }
             if (account.getEmail() != null) {
                 target.setEmail(account.getEmail());
             }
@@ -90,14 +94,14 @@ public class AccountRestController {
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
 
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.noContent().build();
 
     }
 
     //Delete
 
     @RequestMapping(method=RequestMethod.DELETE, value="/accounts/{username}")
-    public void delete(@PathVariable String username) {
+    public ResponseEntity<?> delete(@PathVariable String username) {
         Account account = accountRepository.findByUsername(username).orElseThrow(
                     ()-> new UsernameNotFoundException(username)
                 );
@@ -106,6 +110,8 @@ public class AccountRestController {
         purityReportRepository.delete(account.getPurityReports());
 
         accountRepository.deleteByUsername(username);
+
+        return ResponseEntity.noContent().build();
     }
 
 }

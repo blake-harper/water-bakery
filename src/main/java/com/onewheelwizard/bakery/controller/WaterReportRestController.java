@@ -1,6 +1,7 @@
 package com.onewheelwizard.bakery.controller;
 
 import com.onewheelwizard.bakery.model.*;
+import com.onewheelwizard.bakery.security.UsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class WaterReportRestController {
 
     //Create
 
-    @RequestMapping(method = RequestMethod.POST, value = "/{username}/water-reports")
+    @RequestMapping(method = RequestMethod.POST, value = "/water-reports/{username}")
     ResponseEntity<?> add(@PathVariable String username, @RequestBody WaterReport input) {
         validateUser(username);
         //TODO validate report
@@ -57,13 +58,13 @@ public class WaterReportRestController {
         return report;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{username}/water-reports")
+    @RequestMapping(method = RequestMethod.GET, value = "/water-reports/{username}")
     Collection<WaterReport> getReport(@PathVariable String username) {
         validateUser(username);
         return waterReportRepository.findByAccountUsername(username);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value ="/{username}/water-reports/{id}")
+    @RequestMapping(method = RequestMethod.GET, value ="/water-reports/{username}/{id}")
     WaterReport getReport(@PathVariable String username, @PathVariable Long id) {
         Account account = validateUser(username);
         WaterReport report = waterReportRepository.findOne(id);
@@ -90,12 +91,14 @@ public class WaterReportRestController {
         waterReportRepository.delete(id);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value ="/{username}/water-reports/{id}")
-    void delete(@PathVariable String username, @PathVariable Long id) {
+    @RequestMapping(method = RequestMethod.DELETE, value ="/water-reports/{username}/{id}")
+    ResponseEntity<?> delete(@PathVariable String username, @PathVariable Long id) {
         //if this returns, then we know the id is valid and is paired with the correct user
         getReport(username, id);
 
         waterReportRepository.delete(id);
+
+        return ResponseEntity.noContent().build();
     }
 
     /**
