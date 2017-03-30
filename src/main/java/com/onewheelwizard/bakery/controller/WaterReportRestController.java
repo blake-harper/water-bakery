@@ -25,7 +25,7 @@ public class WaterReportRestController {
 
     //Create
 
-    @RequestMapping(method = RequestMethod.POST, value = "/water-reports/{username}")
+    @RequestMapping(method = RequestMethod.POST, value = "/{username}/water-reports")
     ResponseEntity<?> add(@PathVariable String username, @RequestBody WaterReport input) {
         validateUser(username);
         //TODO validate report
@@ -58,13 +58,13 @@ public class WaterReportRestController {
         return report;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/water-reports/{username}")
+    @RequestMapping(method = RequestMethod.GET, value = "/{username}/water-reports")
     Collection<WaterReport> getReport(@PathVariable String username) {
         validateUser(username);
         return waterReportRepository.findByAccountUsername(username);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value ="/water-reports/{username}/{id}")
+    @RequestMapping(method = RequestMethod.GET, value ="/{username}/water-reports/{id}")
     WaterReport getReport(@PathVariable String username, @PathVariable Long id) {
         Account account = validateUser(username);
         WaterReport report = waterReportRepository.findOne(id);
@@ -91,7 +91,7 @@ public class WaterReportRestController {
         waterReportRepository.delete(id);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value ="/water-reports/{username}/{id}")
+    @RequestMapping(method = RequestMethod.DELETE, value ="{username}//water-reports/{id}")
     ResponseEntity<?> delete(@PathVariable String username, @PathVariable Long id) {
         //if this returns, then we know the id is valid and is paired with the correct user
         getReport(username, id);
