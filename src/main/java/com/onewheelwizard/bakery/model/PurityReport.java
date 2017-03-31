@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.onewheelwizard.bakery.model.constants.WaterPurityCondition;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -26,23 +25,23 @@ public class PurityReport {
 
     @Enumerated(EnumType.STRING)
     private WaterPurityCondition waterPurityCondition;
-    private float virusPPM;
-    private float contaminantPPM;
+    private float virusPpm;
+    private float contaminantPpm;
 
     //Constructors
 
     PurityReport() { // For JPA!
     }
 
-    public PurityReport(Account account, ZonedDateTime postDate, double latitude, double longitude,WaterPurityCondition waterPurityCondition, float virusPPM,
-                        float contaminantPPM) {
+    public PurityReport(Account account, ZonedDateTime postDate, double latitude, double longitude,WaterPurityCondition waterPurityCondition, float virusPpm,
+                        float contaminantPpm) {
         this.account = account;
         this.postDate = postDate;
         this.latitude = latitude;
         this.longitude = longitude;
         this.waterPurityCondition = waterPurityCondition;
-        this.virusPPM = virusPPM;
-        this.contaminantPPM = contaminantPPM;
+        this.virusPpm = virusPpm;
+        this.contaminantPpm = contaminantPpm;
     }
 
     // Getters and Setters
@@ -66,12 +65,12 @@ public class PurityReport {
         return longitude;
     }
 
-    public float getVirusPPM() {
-        return virusPPM;
+    public float getVirusPpm() {
+        return virusPpm;
     }
 
-    public float getContaminantPPM() {
-        return contaminantPPM;
+    public float getContaminantPpm() {
+        return contaminantPpm;
     }
 
     public WaterPurityCondition getWaterPurityCondition() {
