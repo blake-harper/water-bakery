@@ -24,7 +24,7 @@ public class PurityReportRestController {
     //Create
 
     @RequestMapping(method = RequestMethod.POST, value = "/{username}/purity-reports")
-    ResponseEntity<?> add(@PathVariable String username, @RequestBody PurityReport input) {
+    PurityReport add(@PathVariable String username, @RequestBody PurityReport input) {
         validateUser(username);
         //TODO validate report
 
@@ -36,9 +36,9 @@ public class PurityReportRestController {
                     URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                             .path("/{id}").buildAndExpand(result.getId()).toUri();
 
-                    return ResponseEntity.created(uri).build();
+                    return result;
                 })
-                .orElse(ResponseEntity.noContent().build());
+                .orElseThrow(()->new InvalidReportException("purity report"));
     }
 
     //Read

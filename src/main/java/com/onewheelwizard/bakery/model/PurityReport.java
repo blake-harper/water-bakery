@@ -78,8 +78,8 @@ public class PurityReport {
         return waterPurityCondition;
     }
 
-    @JsonProperty("owner")
-    public String getOwnerUsername() {
+    @JsonProperty("authorUsername")
+    public String getAuthorUsername() {
         return account.getUsername();
     }
 }
