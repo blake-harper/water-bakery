@@ -26,7 +26,7 @@ public class WaterReportRestController {
     //Create
 
     @RequestMapping(method = RequestMethod.POST, value = "/{username}/water-reports")
-    ResponseEntity<?> add(@PathVariable String username, @RequestBody WaterReport input) {
+    WaterReport add(@PathVariable String username, @RequestBody WaterReport input) {
         validateUser(username);
         //TODO validate report
 
@@ -37,9 +37,9 @@ public class WaterReportRestController {
                     URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                             .path("/{id}").buildAndExpand(result.getId()).toUri();
 
-                    return ResponseEntity.created(uri).build();
+                    return result;
                 })
-                .orElse(ResponseEntity.noContent().build());
+                .orElseThrow(()->new InvalidReportException("water report"));
     }
 
     //Read
