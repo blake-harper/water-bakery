@@ -2,7 +2,6 @@ package com.onewheelwizard.bakery.controller;
 
 import com.onewheelwizard.bakery.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -32,7 +31,7 @@ public class PurityReportRestController {
                 .map(account-> {
                     PurityReport result = purityReportRepository.save(new PurityReport(account, ZonedDateTime.now(),
                             input.getLatitude(),input.getLongitude(), input.getWaterPurityCondition(),
-                            input.getVirusPPM(),input.getContaminantPPM()));
+                            input.getVirusPpm(),input.getContaminantPpm()));
                     URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                             .path("/{id}").buildAndExpand(result.getId()).toUri();
 
