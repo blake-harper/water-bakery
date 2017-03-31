@@ -26,10 +26,10 @@ public class WaterReport {
     private double longitude;
 
     @Enumerated(EnumType.STRING)
-    WaterType waterType;
+    private WaterType waterType;
 
     @Enumerated(EnumType.STRING)
-    WaterCondition waterCondition;
+    private WaterCondition waterCondition;
 
     //Constructors
     WaterReport() { // For JPA!
