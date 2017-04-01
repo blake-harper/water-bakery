@@ -1,12 +1,16 @@
 package com.onewheelwizard.bakery.controller;
 
-import com.onewheelwizard.bakery.model.*;
+import com.onewheelwizard.bakery.model.Account;
+import com.onewheelwizard.bakery.model.AccountRepository;
+import com.onewheelwizard.bakery.model.WaterReport;
+import com.onewheelwizard.bakery.model.WaterReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
@@ -33,8 +37,8 @@ public class WaterReportRestController {
                 .map(account-> {
                     WaterReport result = waterReportRepository.save(new WaterReport(account, ZonedDateTime.now(),
                             input.getLatitude(),input.getLongitude(),input.getWaterType(),input.getWaterCondition()));
-                    URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                            .path("/{id}").buildAndExpand(result.getId()).toUri();
+//                    URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+//                            .path("/{id}").buildAndExpand(result.getId()).toUri();
 
                     return result;
                 })
