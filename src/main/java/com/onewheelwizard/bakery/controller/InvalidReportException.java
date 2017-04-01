@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class InvalidReportException extends RuntimeException {
     public InvalidReportException(String reportType) {
-        super("invalid "+ reportType);
+        super("invalid " + reportType);
     }
 }

@@ -34,15 +34,14 @@ public class WaterReportRestController {
         //TODO validate report
 
         return accountRepository.findByUsername(username)
-                .map(account-> {
+                .map(account -> {
                     WaterReport result = waterReportRepository.save(new WaterReport(account, ZonedDateTime.now(),
-                            input.getLatitude(),input.getLongitude(),input.getWaterType(),input.getWaterCondition()));
-//                    URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-//                            .path("/{id}").buildAndExpand(result.getId()).toUri();
+                            input.getLatitude(), input.getLongitude(), input.getWaterType(),
+                            input.getWaterCondition()));
 
                     return result;
                 })
-                .orElseThrow(()->new InvalidReportException("water report"));
+                .orElseThrow(() -> new InvalidReportException("water report"));
     }
 
     //Read
@@ -52,7 +51,7 @@ public class WaterReportRestController {
         return waterReportRepository.findAll();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value ="/water-reports/{id}")
+    @RequestMapping(method = RequestMethod.GET, value = "/water-reports/{id}")
     WaterReport getReport(@PathVariable Long id) {
         WaterReport report = waterReportRepository.findOne(id);
         if (report == null) {
@@ -67,7 +66,7 @@ public class WaterReportRestController {
         return waterReportRepository.findByAccountUsername(username);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value ="/{username}/water-reports/{id}")
+    @RequestMapping(method = RequestMethod.GET, value = "/{username}/water-reports/{id}")
     WaterReport getReport(@PathVariable String username, @PathVariable Long id) {
         Account account = validateUser(username);
         WaterReport report = waterReportRepository.findOne(id);
@@ -83,7 +82,7 @@ public class WaterReportRestController {
 
     //Delete
 
-    @RequestMapping(method = RequestMethod.DELETE, value ="/water-reports/{id}")
+    @RequestMapping(method = RequestMethod.DELETE, value = "/water-reports/{id}")
     void delete(@PathVariable Long id) {
         WaterReport report = waterReportRepository.findOne(id);
 
@@ -94,7 +93,7 @@ public class WaterReportRestController {
         waterReportRepository.delete(id);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value ="/{username}/water-reports/{id}")
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{username}/water-reports/{id}")
     void delete(@PathVariable String username, @PathVariable Long id) {
         //if this returns, then we know the id is valid and is paired with the correct user
         getReport(username, id);
@@ -104,13 +103,14 @@ public class WaterReportRestController {
 
     /**
      * Checks if the username is in the user repository
+     *
      * @param username the username to return
      * @return the Account associated with the username
      * @throws UsernameNotFoundException if the username is not in the user repository
      */
     private Account validateUser(String username) {
         return accountRepository.findByUsername(username).orElseThrow(
-                ()-> new UsernameNotFoundException(username)
+                () -> new UsernameNotFoundException(username)
         );
     }
 }
