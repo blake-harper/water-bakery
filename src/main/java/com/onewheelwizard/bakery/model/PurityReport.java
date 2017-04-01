@@ -4,7 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.onewheelwizard.bakery.model.constants.WaterPurityCondition;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -33,8 +38,9 @@ public class PurityReport {
     PurityReport() { // For JPA!
     }
 
-    public PurityReport(Account account, ZonedDateTime postDate, double latitude, double longitude,WaterPurityCondition waterPurityCondition, float virusPpm,
-                        float contaminantPpm) {
+    public PurityReport(Account account, ZonedDateTime postDate, double latitude, double longitude,
+            WaterPurityCondition waterPurityCondition, float virusPpm,
+            float contaminantPpm) {
         this.account = account;
         this.postDate = postDate;
         this.latitude = latitude;

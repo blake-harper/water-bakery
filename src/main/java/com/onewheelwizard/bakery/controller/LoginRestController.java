@@ -34,7 +34,7 @@ public class LoginRestController {
         return userAccount.map(
                 existingAccount -> existingAccount.getPassword().equals(credentials.getPassword())
                         ? ResponseEntity.noContent().build()
-                        : new ResponseEntity<String>("Unauthorized",HttpStatus.UNAUTHORIZED))
+                        : new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED))
                 .orElse(ResponseEntity.notFound().build());
     }
 

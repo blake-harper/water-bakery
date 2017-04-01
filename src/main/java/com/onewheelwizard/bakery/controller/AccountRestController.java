@@ -1,13 +1,21 @@
 package com.onewheelwizard.bakery.controller;
 
-import com.onewheelwizard.bakery.model.*;
+import com.onewheelwizard.bakery.model.Account;
+import com.onewheelwizard.bakery.model.AccountRepository;
+import com.onewheelwizard.bakery.model.PurityReportRepository;
+import com.onewheelwizard.bakery.model.WaterReportRepository;
 import com.onewheelwizard.bakery.security.UsernameNotFoundException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Optional;
+
 
 @RestController
 public class AccountRestController {
@@ -16,8 +24,8 @@ public class AccountRestController {
     private final PurityReportRepository purityReportRepository;
 
     public AccountRestController(AccountRepository accountRepository,
-                                 WaterReportRepository waterReportRepository,
-                                 PurityReportRepository purityReportRepository) {
+            WaterReportRepository waterReportRepository,
+            PurityReportRepository purityReportRepository) {
         this.accountRepository = accountRepository;
         this.waterReportRepository = waterReportRepository;
         this.purityReportRepository = purityReportRepository;
@@ -48,14 +56,14 @@ public class AccountRestController {
     @RequestMapping(method = RequestMethod.GET, value = "/accounts/{username}")
     Account getAccountByUsername(@PathVariable String username) {
         return accountRepository.findByUsername(username).orElseThrow(
-                ()-> new UsernameNotFoundException(username)
+                () -> new UsernameNotFoundException(username)
         );
     }
 
     //Update
 
     @RequestMapping(method = RequestMethod.PUT, value = "/accounts/{username}")
-    ResponseEntity<?> createOrUpdate(@PathVariable String username,@RequestBody Account account) {
+    ResponseEntity<?> createOrUpdate(@PathVariable String username, @RequestBody Account account) {
         Optional<Account> existingAccount = accountRepository.findByUsername(username);
         Account target;
         if (existingAccount.isPresent()) {
@@ -83,8 +91,8 @@ public class AccountRestController {
 
         } else {
             //NB username should always be from the request URL
-            target = new Account(username, account.getPassword(),account.getUserType(),account.getEmail(),
-                    account.getTitle(),account.getCity());
+            target = new Account(username, account.getPassword(), account.getUserType(), account.getEmail(),
+                    account.getTitle(), account.getCity());
 
             //TODO validation
 
@@ -94,17 +102,16 @@ public class AccountRestController {
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
 
-        return ResponseEntity.noContent().build();
 
     }
 
     //Delete
 
-    @RequestMapping(method=RequestMethod.DELETE, value="/accounts/{username}")
+    @RequestMapping(method = RequestMethod.DELETE, value = "/accounts/{username}")
     public ResponseEntity<?> delete(@PathVariable String username) {
         Account account = accountRepository.findByUsername(username).orElseThrow(
-                    ()-> new UsernameNotFoundException(username)
-                );
+                () -> new UsernameNotFoundException(username)
+        );
 
         waterReportRepository.delete(account.getWaterReports());
         purityReportRepository.delete(account.getPurityReports());

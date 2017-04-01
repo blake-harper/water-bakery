@@ -5,8 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.onewheelwizard.bakery.model.constants.WaterCondition;
 import com.onewheelwizard.bakery.model.constants.WaterType;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -36,7 +40,7 @@ public class WaterReport {
     }
 
     public WaterReport(Account account, ZonedDateTime postDate, double latitude, double longitude,
-                       WaterType waterType, WaterCondition waterCondition) {
+            WaterType waterType, WaterCondition waterCondition) {
         this.account = account;
         this.postDate = postDate;
         this.latitude = latitude;

@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface PurityReportRepository extends JpaRepository<PurityReport, Long> {
     Collection<PurityReport> findByAccountUsername(String username);
+
     Optional<PurityReport> findById(Long id);
 }
