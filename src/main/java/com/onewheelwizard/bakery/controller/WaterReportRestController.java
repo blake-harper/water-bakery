@@ -34,13 +34,9 @@ public class WaterReportRestController {
         //TODO validate report
 
         return accountRepository.findByUsername(username)
-                .map(account -> {
-                    WaterReport result = waterReportRepository.save(new WaterReport(account, ZonedDateTime.now(),
-                            input.getLatitude(), input.getLongitude(), input.getWaterType(),
-                            input.getWaterCondition()));
-
-                    return result;
-                })
+                .map(account -> waterReportRepository.save(new WaterReport(account, ZonedDateTime.now(),
+                        input.getLatitude(), input.getLongitude(), input.getWaterType(),
+                        input.getWaterCondition())))
                 .orElseThrow(() -> new InvalidReportException("water report"));
     }
 

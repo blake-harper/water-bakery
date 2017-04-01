@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
@@ -36,15 +34,9 @@ public class PurityReportRestController {
         //TODO validate report
 
         return accountRepository.findByUsername(username)
-                .map(account -> {
-                    PurityReport result = purityReportRepository.save(new PurityReport(account, ZonedDateTime.now(),
-                            input.getLatitude(), input.getLongitude(), input.getWaterPurityCondition(),
-                            input.getVirusPpm(), input.getContaminantPpm()));
-                    URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                            .path("/{id}").buildAndExpand(result.getId()).toUri();
-
-                    return result;
-                })
+                .map((Account account) -> purityReportRepository.save(new PurityReport(account, ZonedDateTime.now(),
+                        input.getLatitude(), input.getLongitude(), input.getWaterPurityCondition(),
+                        input.getVirusPpm(), input.getContaminantPpm())))
                 .orElseThrow(() -> new InvalidReportException("purity report"));
     }
 
