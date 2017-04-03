@@ -1,5 +1,6 @@
-package com.onewheelwizard.bakery.model;
+package com.onewheelwizard.bakery.data;
 
+import com.onewheelwizard.bakery.model.PurityReport;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;

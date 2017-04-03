@@ -1,7 +1,7 @@
 package com.onewheelwizard.bakery.controller;
 
 import com.onewheelwizard.bakery.model.Account;
-import com.onewheelwizard.bakery.model.AccountRepository;
+import com.onewheelwizard.bakery.data.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,11 +1,11 @@
 package com.onewheelwizard.bakery.controller;
 
 import com.onewheelwizard.bakery.model.Account;
-import com.onewheelwizard.bakery.model.AccountRepository;
+import com.onewheelwizard.bakery.data.AccountRepository;
 import com.onewheelwizard.bakery.model.PurityReport;
-import com.onewheelwizard.bakery.model.PurityReportRepository;
+import com.onewheelwizard.bakery.data.PurityReportRepository;
 import com.onewheelwizard.bakery.model.WaterReport;
-import com.onewheelwizard.bakery.model.WaterReportRepository;
+import com.onewheelwizard.bakery.data.WaterReportRepository;
 import com.onewheelwizard.bakery.model.constants.UserType;
 import com.onewheelwizard.bakery.model.constants.WaterCondition;
 import com.onewheelwizard.bakery.model.constants.WaterPurityCondition;

@@ -1,7 +1,6 @@
 package com.onewheelwizard.bakery.security;
 
-import com.onewheelwizard.bakery.model.Account;
-import com.onewheelwizard.bakery.model.AccountRepository;
+import com.onewheelwizard.bakery.data.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

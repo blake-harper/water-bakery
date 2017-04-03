@@ -1,9 +1,9 @@
 package com.onewheelwizard.bakery.controller;
 
 import com.onewheelwizard.bakery.model.Account;
-import com.onewheelwizard.bakery.model.AccountRepository;
+import com.onewheelwizard.bakery.data.AccountRepository;
 import com.onewheelwizard.bakery.model.PurityReport;
-import com.onewheelwizard.bakery.model.PurityReportRepository;
+import com.onewheelwizard.bakery.data.PurityReportRepository;
 import com.onewheelwizard.bakery.security.UsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
