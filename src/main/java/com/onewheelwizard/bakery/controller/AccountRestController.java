@@ -99,10 +99,7 @@ public class AccountRestController {
             accountRepository.save(target);
         }
 
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
-
-
+        return ResponseEntity.noContent().build();
     }
 
     //Delete
