@@ -1,6 +1,7 @@
 package com.onewheelwizard.bakery.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.onewheelwizard.bakery.model.constants.UserType;
 
 import javax.persistence.Entity;
@@ -57,6 +58,7 @@ public class Account {
         return username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -85,6 +87,7 @@ public class Account {
         return city;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         //todo salt/hash - spring might have a handler for this
         this.password = password;
