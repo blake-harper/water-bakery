@@ -85,6 +85,10 @@ public class PurityReport {
 
     @JsonProperty("authorUsername")
     public String getAuthorUsername() {
-        return account.getUsername();
+        if (account!= null) {
+            return account.getUsername();
+        } else {
+            return null;
+        }
     }
 }
