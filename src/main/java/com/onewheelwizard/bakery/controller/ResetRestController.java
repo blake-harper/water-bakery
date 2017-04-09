@@ -60,7 +60,7 @@ class ResetRestController {
                                         r.nextFloat() * r.nextInt(10), r.nextFloat()));
                     }
                     purityReportRepository
-                            .save(new PurityReport(account, ZonedDateTime.of(2016, r.nextInt(13)+1, 10, 10, 9, 2, 1,
+                            .save(new PurityReport(account, ZonedDateTime.of(2016, r.nextInt(12)+1, 10, 10, 9, 2, 1,
                                     ZoneId.systemDefault()), latitude, longitude, WaterPurityCondition.values()[r.nextInt(WaterPurityCondition.values().length)],
                                     r.nextFloat() * r.nextInt(10), r.nextFloat()));
                 });
