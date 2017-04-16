@@ -34,7 +34,7 @@ public class AccountRestController {
     //Create
 
     @RequestMapping(method = RequestMethod.POST, value = "/accounts")
-    ResponseEntity<?> create(@RequestBody Account account) {
+    ResponseEntity<?> postAccount(@RequestBody Account account) {
         Optional<Account> existingAccount = accountRepository.findByUsername(account.getUsername());
 
         if (existingAccount.isPresent()) {
@@ -63,7 +63,7 @@ public class AccountRestController {
     //Update
 
     @RequestMapping(method = RequestMethod.PUT, value = "/accounts/{username}")
-    ResponseEntity<?> createOrUpdate(@PathVariable String username, @RequestBody Account account) {
+    ResponseEntity<?> createOrUpdateAccount(@PathVariable String username, @RequestBody Account account) {
         Optional<Account> existingAccount = accountRepository.findByUsername(username);
         Account target;
         if (existingAccount.isPresent()) {
@@ -84,20 +84,14 @@ public class AccountRestController {
                 //TODO some kind of "check old password before updating". maybe in the header?
                 target.setPassword(account.getPassword());
             }
-
-            //TODO validation
-
-            accountRepository.save(target);
-
         } else {
             //NB username should always be from the request URL
             target = new Account(username, account.getPassword(), account.getUserType(), account.getEmail(),
                     account.getTitle(), account.getCity());
-
-            //TODO validation
-
-            accountRepository.save(target);
         }
+        //TODO validation
+
+        accountRepository.save(target);
 
         return ResponseEntity.noContent().build();
     }
@@ -110,8 +104,8 @@ public class AccountRestController {
                 () -> new UsernameNotFoundException(username)
         );
 
-        waterReportRepository.delete(account.getWaterReports());
-        purityReportRepository.delete(account.getPurityReports());
+        waterReportRepository.deleteAllByAccountUsername(username);
+        purityReportRepository.deleteAllByAccountUsername(username);
 
         accountRepository.deleteByUsername(username);
 
