@@ -1,7 +1,6 @@
 package com.onewheelwizard.bakery.security;
 
 import com.onewheelwizard.bakery.data.AccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,8 +13,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @Configuration
 class WebSecurityConfigurationAdapter extends GlobalAuthenticationConfigurerAdapter {
 
-    @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
+
+    WebSecurityConfigurationAdapter(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
+
 
     @Override
     public void init(AuthenticationManagerBuilder auth) throws Exception {
