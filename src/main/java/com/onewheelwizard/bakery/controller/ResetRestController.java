@@ -22,9 +22,9 @@ import java.util.Random;
 @RestController
 class ResetRestController {
 
-    AccountRepository accountRepository;
-    WaterReportRepository waterReportRepository;
-    PurityReportRepository purityReportRepository;
+    private AccountRepository accountRepository;
+    private WaterReportRepository waterReportRepository;
+    private PurityReportRepository purityReportRepository;
 
     public ResetRestController(AccountRepository accountRepository,
             WaterReportRepository waterReportRepository,

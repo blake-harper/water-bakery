@@ -30,7 +30,7 @@ public class PurityReportRestController {
     //Create
 
     @RequestMapping(method = RequestMethod.POST, value = "/{username}/purity-reports")
-    PurityReport add(@PathVariable String username, @RequestBody PurityReport input) {
+    PurityReport postPuirtyReport(@PathVariable String username, @RequestBody PurityReport input) {
         validateUser(username);
         //TODO validate report
 
@@ -48,8 +48,14 @@ public class PurityReportRestController {
         return purityReportRepository.findAll();
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/{username}/purity-reports")
+    Collection<PurityReport> getPurityReports(@PathVariable String username) {
+        validateUser(username);
+        return purityReportRepository.findByAccountUsername(username);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/purity-reports/{id}")
-    PurityReport getReport(@PathVariable Long id) {
+    PurityReport getPurityReportById(@PathVariable Long id) {
         PurityReport report = purityReportRepository.findOne(id);
         if (report == null) {
             throw new IdNotFoundException(id);
@@ -57,14 +63,8 @@ public class PurityReportRestController {
         return report;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{username}/purity-reports")
-    Collection<PurityReport> getPurityReports(@PathVariable String username) {
-        validateUser(username);
-        return purityReportRepository.findByAccountUsername(username);
-    }
-
     @RequestMapping(method = RequestMethod.GET, value = "/{username}/purity-reports/{id}")
-    PurityReport getReport(@PathVariable String username, @PathVariable Long id) {
+    PurityReport getPurityReportById(@PathVariable String username, @PathVariable Long id) {
         Account account = validateUser(username);
         PurityReport purityReport = purityReportRepository.findOne(id);
 
@@ -93,7 +93,7 @@ public class PurityReportRestController {
     @RequestMapping(method = RequestMethod.DELETE, value = "/{username}/purity-reports/{id}")
     void delete(@PathVariable String username, @PathVariable Long id) {
         //if this returns, then we know the id is valid and is paired with the correct user
-        getReport(username, id);
+        getPurityReportById(username, id);
 
         purityReportRepository.delete(id);
     }
