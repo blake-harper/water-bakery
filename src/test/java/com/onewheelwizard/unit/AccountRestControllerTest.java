@@ -1,5 +1,6 @@
 package com.onewheelwizard.unit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onewheelwizard.bakery.controller.AccountRestController;
 import com.onewheelwizard.bakery.data.AccountRepository;
 import com.onewheelwizard.bakery.data.PurityReportRepository;
@@ -19,7 +20,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,7 +41,6 @@ public class AccountRestControllerTest {
 
     @InjectMocks
     private AccountRestController accountRestController;
-
 
     @Before
     public void setup() {
@@ -65,7 +68,10 @@ public class AccountRestControllerTest {
         when(accountRepository.findByUsername(validAccount.getUsername())).thenReturn(
                 Optional.of(existingAccount));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/accounts/"))
+        mockMvc.perform(MockMvcRequestBuilders.
+                post("/accounts/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(validAccount)))
                 .andExpect(status().isBadRequest());
 
         verify(accountRepository, times(1)).findByUsername(validAccount.getUsername());
@@ -147,6 +153,12 @@ public class AccountRestControllerTest {
         verifyNoMoreInteractions(accountRepository);
     }
 
-
+    private static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
