@@ -1,14 +1,15 @@
-package com.onewheelwizard;
+package com.onewheelwizard.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onewheelwizard.bakery.BakeryApplication;
 import com.onewheelwizard.bakery.data.AccountRepository;
 import com.onewheelwizard.bakery.data.PurityReportRepository;
 import com.onewheelwizard.bakery.data.WaterReportRepository;
 import com.onewheelwizard.bakery.model.Account;
+import com.onewheelwizard.bakery.model.PurityReport;
 import com.onewheelwizard.bakery.model.WaterReport;
 import com.onewheelwizard.bakery.model.constants.UserType;
 import com.onewheelwizard.bakery.model.constants.WaterCondition;
+import com.onewheelwizard.bakery.model.constants.WaterPurityCondition;
 import com.onewheelwizard.bakery.model.constants.WaterType;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
@@ -32,10 +32,11 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -43,8 +44,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @SpringBootTest(classes = BakeryApplication.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
-public class WaterReportRestControllerTest {
-
+public class PurityReportRestControllerIntegrationTest {
     // section: server setup / mocking
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -69,11 +69,9 @@ public class WaterReportRestControllerTest {
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
     private Account account;
-    private WaterReport waterReport;
+    private List<PurityReport> purityReports;
 
-    // section: json setup/handling
-    @Autowired
-    private ObjectMapper jacksonObjectMapper;
+    private Random r;
 
     @Autowired
     void setConverters(HttpMessageConverter<?>[] converters) {
@@ -102,97 +100,81 @@ public class WaterReportRestControllerTest {
     public void setup() throws Exception {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
 
-        this.waterReportRepository.deleteAllInBatch();
         this.purityReportRepository.deleteAllInBatch();
+        this.waterReportRepository.deleteAllInBatch();
         this.accountRepository.deleteAllInBatch();
+
+        this.r = new Random(System.currentTimeMillis());
 
         this.account = accountRepository
                 .save(new Account(username, "password", UserType.MANAGER, "email@email.email", "Sir", "Citytown"));
-        this.waterReport = waterReportRepository.save(
-                new WaterReport(account, ZonedDateTime.now(), 50.5, 40.4, WaterType.OTHER,
-                        WaterCondition.TREATABLE_CLEAR));
+
+        this.purityReports = new LinkedList<>();
+
+        this.purityReports.add(purityReportRepository.save(generateRandomReport(this.account)));
+        this.purityReports.add(purityReportRepository.save(generateRandomReport(this.account)));
+        this.purityReports.add(purityReportRepository.save(generateRandomReport(this.account)));
+    }
+
+    private PurityReport generateRandomReport(Account account) {
+        return new PurityReport(account, ZonedDateTime.now(), r.nextDouble(), r.nextDouble(),
+                WaterPurityCondition.values()[r.nextInt(WaterPurityCondition.values().length)], r.nextFloat(), r.nextFloat());
     }
 
     // section: unit tests
     @Test
     public void postWaterReport_UserDoesNotExist_ReturnsIsNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/larry/water-reports/")
-                .content(json(new WaterReport(account, null, 0, 0, WaterType.OTHER, WaterCondition.TREATABLE_MUDDY)))
+        mockMvc.perform(MockMvcRequestBuilders.post("/larry/purity-reports/")
+                .content(json(new WaterReport(null, null, 0, 0, WaterType.OTHER, WaterCondition.TREATABLE_MUDDY)))
                 .contentType(contentType))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void postWaterReport_ValidReport_ReturnsIsOkAndValidReport() throws Exception {
-        double latitude = 13.37;
-        double longitude = 26.74;
-        WaterType expectedWaterType = WaterType.OTHER;
-        WaterCondition expectedWaterCondition = WaterCondition.TREATABLE_MUDDY;
+        PurityReport expectedReport = generateRandomReport(this.account);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/" + username + "/water-reports/")
-                .content(json(new WaterReport(null, null, latitude, longitude, expectedWaterType,
-                        expectedWaterCondition)))
+        mockMvc.perform(MockMvcRequestBuilders.post("/" + username + "/purity-reports/")
+                .content(json(expectedReport))
                 .contentType(contentType))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.authorUsername").value(username))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.postDate").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.latitude").value(latitude))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.longitude").value(longitude))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.waterType").value(expectedWaterType.toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.waterCondition").value(expectedWaterCondition.toString()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.latitude").value(expectedReport.getLatitude()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.longitude").value(expectedReport.getLongitude()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.waterPurityCondition").value(expectedReport.getWaterPurityCondition().toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.virusPpm").value(expectedReport.getVirusPpm()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.contaminantPpm").value(expectedReport.getContaminantPpm()));
     }
 
     @Test
-    public void getWaterReportById_ReportDoesNotExist_ReturnsNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/" + username + "/water-reports/" + (waterReport.getId() + 100)))
+    public void getUserWaterReportById_ReportDoesNotExist_ReturnsNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/" + username + "/purity-reports/" + (purityReports.get(0).getId() + 100)))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void getWaterReportById_ValidId_ReturnsIsOkAndValidReport() throws Exception {
-        MvcResult result =
-                mockMvc.perform(MockMvcRequestBuilders.get("/" + username + "/water-reports/" + waterReport.getId()))
-                        .andExpect(status().isOk())
-                        .andExpect(MockMvcResultMatchers.jsonPath("$.authorUsername")
-                                .value(username)) //NB checked here because account will be null
-                        .andReturn();
-        WaterReport actualWaterReport = null;
-        try {
-            actualWaterReport =
-                    jacksonObjectMapper.readValue(result.getResponse().getContentAsString(), WaterReport.class);
-        } catch (java.io.IOException e) {
-            fail("Could not parse response body: " + result.getResponse().getContentAsString() +
-                    "\n because of exception:" + e.getMessage() + "\n" + e.getStackTrace());
-        }
-
-        assertWaterReportEqual(waterReport, actualWaterReport);
+    public void getWaterReportById_ReportDoesNotExist_ReturnsNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/purity-reports/" + (purityReports.get(0).getId() + 100)))
+                .andExpect(status().isNotFound());
     }
 
-    /**
-     * Helper method for determining if a WaterReports are equal. Note, can not check account/authorUsername.
-     *
-     * @param expected the expected water report
-     * @param actual the actual water report
-     */
-    private void assertWaterReportEqual(WaterReport expected, WaterReport actual) {
-        //nb, because account isn't included with json reports (only authorUsername), we cannot check for account equality
+    @Test
+    public void getWaterReportById_ValidReportId_ReturnsReport() throws Exception {
+        PurityReport expectedReport = purityReports.get(1);
 
-        //nb, isEqual() instead of equals() because we only care that they represent the same time; not the same time object
-        assertTrue("Expected postDate: [" + expected.getPostDate() + "] but actual postDate: [" + actual.getPostDate()
-                        + "]",
-                expected.getPostDate().isEqual(actual.getPostDate()));
-        assertTrue("Expected postDate: [" + expected.getWaterCondition() + "] but actual postDate: [" + actual
-                        .getWaterCondition() + "]",
-                expected.getWaterCondition().equals(actual.getWaterCondition()));
-        assertTrue("Expected waterType: [" + expected.getWaterType() + "] but actual waterType is [" + actual
-                        .getWaterType() + "]",
-                expected.getWaterType().equals(actual.getWaterType()));
-        assertTrue("Expected latitude: [" + expected.getLatitude() + "] but actual latitude is [" + actual.getLatitude()
-                        + "]",
-                expected.getLatitude() == actual.getLatitude());
-        assertTrue("Expected longitude: [" + expected.getLongitude() + "] but actual longitude is [" + actual
-                        .getLongitude() + "]",
-                expected.getLongitude() == actual.getLongitude());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/purity-reports/" + expectedReport.getId())
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.authorUsername").value(username))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.postDate").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.latitude").value(expectedReport.getLatitude()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.longitude").value(expectedReport.getLongitude()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.waterPurityCondition").value(expectedReport.getWaterPurityCondition().toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.virusPpm").value(expectedReport.getVirusPpm()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.contaminantPpm").value(expectedReport.getContaminantPpm()));
     }
 }
